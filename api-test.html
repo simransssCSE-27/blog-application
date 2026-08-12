@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+
+    <h1>Blog API Testing</h1>
+
+    <button onclick="testRegister()">Test Register</button>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testBlog()">Test Create Blog</button>
+
+    <pre id="result"></pre>
+
+    <script>
+        async function testRegister() {
+            const response = await fetch("http://localhost:5000/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: "Simran",
+                    email: "simran@example.com",
+                    password: "123456"
+                })
+            });
+
+            const data = await response.json();
+
+            document.getElementById("result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+
+        async function testLogin() {
+            const response = await fetch("http://localhost:5000/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: "simran@example.com",
+                    password: "123456"
+                })
+            });
+
+            const data = await response.json();
+
+            document.getElementById("result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+
+        async function testBlog() {
+            const response = await fetch("http://localhost:5000/api/blogs", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title: "My First Blog",
+                    content: "This is my first blog post."
+                })
+            });
+
+            const data = await response.json();
+
+            document.getElementById("result").textContent =
+                JSON.stringify(data, null, 2);
+        }
+    </script>
+
+</body>
+</html>
