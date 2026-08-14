@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - My Blog</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        #blogs {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .blog-card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        .blog-card h2 {
+            margin-top: 0;
+        }
+
+        .author {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .read-more {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 15px;
+            background: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>All Blogs</h1>
+
+    <div id="blogs">
+        <p>Loading blogs...</p>
+    </div>
+
+
+    <script>
+
+        async function loadBlogs() {
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:5000/api/blogs"
+                );
+
+                const data = await response.json();
+
+                const blogsContainer =
+                    document.getElementById("blogs");
+
+                blogsContainer.innerHTML = "";
+
+                if (data.blogs.length === 0) {
+
+                    blogsContainer.innerHTML =
+                        "<p>No blogs available.</p>";
+
+                    return;
+                }
+
+                data.blogs.forEach(blog => {
+
+                    const blogCard =
+                        document.createElement("div");
+
+                    blogCard.className = "blog-card";
+
+                    blogCard.innerHTML = `
+                        <h2>${blog.title}</h2>
+
+                        <p class="author">
+                            By ${blog.author}
+                        </p>
+
+                        <p>
+                            ${blog.content.substring(0, 150)}...
+                        </p>
+
+                        <a
+                            class="read-more"
+                            href="blog-details.html?id=${blog._id}"
+                        >
+                            Read More
+                        </a>
+                    `;
+
+                    blogsContainer.appendChild(blogCard);
+
+                });
+
+            } catch (error) {
+
+                console.error(error);
+
+                document.getElementById("blogs").innerHTML =
+                    "<p>Unable to load blogs.</p>";
+
+            }
+
+        }
+
+        loadBlogs();
+
+    </script>
+
+</body>
+</html>

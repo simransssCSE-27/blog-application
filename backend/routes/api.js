@@ -1,5 +1,8 @@
 const express = require("express");
 
+const User = require("../models/User");
+const Blog = require("../models/Blog");
+
 const router = express.Router();
 
 
@@ -7,23 +10,51 @@ const router = express.Router();
 // REGISTER API
 // ============================
 
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
 
-    const { name, email, password } = req.body;
+    try {
 
-    if (!name || !email || !password) {
-        return res.status(400).json({
-            message: "All fields are required"
-        });
-    }
+        const { name, email, password } = req.body;
 
-    res.status(201).json({
-        message: "Registration successful!",
-        user: {
-            name: name,
-            email: email
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: "All fields are required"
+            });
         }
-    });
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({
+                message: "User already exists"
+            });
+        }
+
+        const newUser = new User({
+            name,
+            email,
+            password
+        });
+
+        await newUser.save();
+
+        res.status(201).json({
+            message: "Registration successful!",
+            user: {
+                name: newUser.name,
+                email: newUser.email
+            }
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
+    }
 
 });
 
@@ -32,22 +63,49 @@ router.post("/register", (req, res) => {
 // LOGIN API
 // ============================
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
 
-    const { email, password } = req.body;
+    try {
 
-    if (!email || !password) {
-        return res.status(400).json({
-            message: "Email and password are required"
-        });
-    }
+        const { email, password } = req.body;
 
-    res.status(200).json({
-        message: "Login successful!",
-        user: {
-            email: email
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required"
+            });
         }
-    });
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "User not found"
+            });
+        }
+
+        if (user.password !== password) {
+            return res.status(400).json({
+                message: "Incorrect password"
+            });
+        }
+
+        res.json({
+            message: "Login successful!",
+            user: {
+                name: user.name,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
+    }
 
 });
 
@@ -56,26 +114,96 @@ router.post("/login", (req, res) => {
 // CREATE BLOG API
 // ============================
 
-router.post("/create-blog", (req, res) => {
+router.post("/create-blog", async (req, res) => {
 
-    const { title, content, author } = req.body;
+    try {
 
-    if (!title || !content || !author) {
-        return res.status(400).json({
-            message: "Title, content and author are required"
-        });
-    }
+        const { title, content, author } = req.body;
 
-    res.status(201).json({
-        message: "Blog created successfully!",
-        blog: {
+        if (!title || !content || !author) {
+            return res.status(400).json({
+                message: "Title, content and author are required"
+            });
+        }
+
+        const newBlog = new Blog({
             title: title,
             content: content,
             author: author
-        }
-    });
+        });
+
+        await newBlog.save();
+
+        res.status(201).json({
+            message: "Blog created successfully!",
+            blog: newBlog
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Server error"
+        });
+
+    }
 
 });
+// ============================
+// GET ALL BLOGS API
+// ============================
 
+router.get("/blogs", async (req, res) => {
 
+    try {
+
+        const blogs = await Blog.find().sort({ createdAt: -1 });
+
+        res.json({
+            blogs: blogs
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Unable to fetch blogs"
+        });
+
+    }
+
+});
+// ============================
+// GET SINGLE BLOG API
+// ============================
+
+router.get("/blogs/:id", async (req, res) => {
+
+    try {
+
+        const blog = await Blog.findById(req.params.id);
+
+        if (!blog) {
+            return res.status(404).json({
+                message: "Blog not found"
+            });
+        }
+
+        res.json({
+            blog: blog
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Unable to fetch blog"
+        });
+
+    }
+
+});
 module.exports = router;

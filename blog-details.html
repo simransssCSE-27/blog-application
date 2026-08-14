@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Blog Details</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .author {
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+        .content {
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 15px;
+            background: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="blog">
+
+        <p>Loading blog...</p>
+
+    </div>
+
+
+    <script>
+
+        async function loadBlog() {
+
+            const params =
+                new URLSearchParams(window.location.search);
+
+            const id = params.get("id");
+
+            if (!id) {
+
+                document.getElementById("blog").innerHTML =
+                    "<h2>Blog not found</h2>";
+
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    `http://localhost:5000/api/blogs/${id}`
+                );
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message);
+                }
+
+                const blog = data.blog;
+
+                document.getElementById("blog").innerHTML = `
+
+                    <h1>${blog.title}</h1>
+
+                    <p class="author">
+                        By ${blog.author}
+                    </p>
+
+                    <div class="content">
+                        ${blog.content}
+                    </div>
+
+                    <a
+                        href="dashboard.html"
+                        class="back"
+                    >
+                        ← Back to Blogs
+                    </a>
+
+                `;
+
+            } catch (error) {
+
+                console.error(error);
+
+                document.getElementById("blog").innerHTML =
+                    "<h2>Unable to load blog</h2>";
+
+            }
+
+        }
+
+        loadBlog();
+
+    </script>
+
+</body>
+</html>
