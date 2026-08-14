@@ -92,7 +92,9 @@
 
         <h1>Welcome Back</h1>
 
-        <p class="subtitle">Login to your account</p>
+        <p class="subtitle">
+            Login to your account
+        </p>
 
         <form id="loginForm">
 
@@ -114,7 +116,9 @@
                 required
             >
 
-            <button type="submit">Login</button>
+            <button type="submit">
+                Login
+            </button>
 
         </form>
 
@@ -127,6 +131,10 @@
 
 
     <script>
+
+        // ============================
+        // LOGIN
+        // ============================
 
         document
             .getElementById("loginForm")
@@ -162,13 +170,36 @@
 
                     alert(data.message);
 
-                    console.log(data);
+                    // ============================
+                    // LOGIN SUCCESS
+                    // ============================
+
+                    if (response.ok) {
+
+                        // Save JWT token
+                        localStorage.setItem(
+                            "token",
+                            data.token
+                        );
+
+                        // Save user information
+                        localStorage.setItem(
+                            "user",
+                            JSON.stringify(data.user)
+                        );
+
+                        // Open dashboard
+                        window.location.href =
+                            "dashboard.html";
+                    }
 
                 } catch (error) {
 
                     console.error(error);
 
-                    alert("Unable to connect to server.");
+                    alert(
+                        "Unable to connect to server."
+                    );
 
                 }
 

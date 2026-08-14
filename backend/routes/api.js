@@ -1,7 +1,9 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 const Blog = require("../models/Blog");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -41,6 +43,7 @@ router.post("/register", async (req, res) => {
         res.status(201).json({
             message: "Registration successful!",
             user: {
+                id: newUser._id,
                 name: newUser.name,
                 email: newUser.email
             }
@@ -60,7 +63,7 @@ router.post("/register", async (req, res) => {
 
 
 // ============================
-// LOGIN API
+// LOGIN API WITH JWT
 // ============================
 
 router.post("/login", async (req, res) => {
@@ -89,9 +92,23 @@ router.post("/login", async (req, res) => {
             });
         }
 
-        res.json({
+        // Create JWT token
+        const token = jwt.sign(
+            {
+                userId: user._id,
+                email: user.email
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "1h"
+            }
+        );
+
+        res.status(200).json({
             message: "Login successful!",
+            token: token,
             user: {
+                id: user._id,
                 name: user.name,
                 email: user.email
             }
@@ -114,22 +131,31 @@ router.post("/login", async (req, res) => {
 // CREATE BLOG API
 // ============================
 
-router.post("/create-blog", async (req, res) => {
+router.post("/create-blog", authMiddleware, async (req, res) => {
 
     try {
 
-        const { title, content, author } = req.body;
+        const { title, content } = req.body;
 
-        if (!title || !content || !author) {
+        if (!title || !content) {
             return res.status(400).json({
-                message: "Title, content and author are required"
+                message: "Title and content are required"
+            });
+        }
+
+        const user = await User.findById(req.user.userId);
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
             });
         }
 
         const newBlog = new Blog({
-            title: title,
-            content: content,
-            author: author
+            title,
+            content,
+            author: user.name,
+            userId: user._id
         });
 
         await newBlog.save();
@@ -150,18 +176,22 @@ router.post("/create-blog", async (req, res) => {
     }
 
 });
+
+
 // ============================
-// GET ALL BLOGS API
+// GET ALL BLOGS
+// PUBLIC
 // ============================
 
 router.get("/blogs", async (req, res) => {
 
     try {
 
-        const blogs = await Blog.find().sort({ createdAt: -1 });
+        const blogs = await Blog.find()
+            .sort({ createdAt: -1 });
 
         res.json({
-            blogs: blogs
+            blogs
         });
 
     } catch (error) {
@@ -175,8 +205,42 @@ router.get("/blogs", async (req, res) => {
     }
 
 });
+
+
 // ============================
-// GET SINGLE BLOG API
+// GET MY BLOGS
+// PROTECTED
+// ============================
+
+router.get("/my-blogs", authMiddleware, async (req, res) => {
+
+    try {
+
+        const blogs = await Blog.find({
+            userId: req.user.userId
+        }).sort({
+            createdAt: -1
+        });
+
+        res.json({
+            blogs
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Unable to fetch your blogs"
+        });
+
+    }
+
+});
+
+
+// ============================
+// GET SINGLE BLOG
 // ============================
 
 router.get("/blogs/:id", async (req, res) => {
@@ -192,7 +256,7 @@ router.get("/blogs/:id", async (req, res) => {
         }
 
         res.json({
-            blog: blog
+            blog
         });
 
     } catch (error) {
@@ -207,37 +271,36 @@ router.get("/blogs/:id", async (req, res) => {
 
 });
 
+
 // ============================
-// UPDATE BLOG API
+// UPDATE MY BLOG
 // ============================
 
-router.put("/blogs/:id", async (req, res) => {
+router.put("/blogs/:id", authMiddleware, async (req, res) => {
 
     try {
 
-        const { title, content, author } = req.body;
+        const { title, content } = req.body;
 
-        const updatedBlog = await Blog.findByIdAndUpdate(
-            req.params.id,
-            {
-                title,
-                content,
-                author
-            },
-            {
-                new: true
-            }
-        );
+        const blog = await Blog.findOne({
+            _id: req.params.id,
+            userId: req.user.userId
+        });
 
-        if (!updatedBlog) {
+        if (!blog) {
             return res.status(404).json({
-                message: "Blog not found"
+                message: "Blog not found or you are not the owner"
             });
         }
 
+        blog.title = title;
+        blog.content = content;
+
+        await blog.save();
+
         res.json({
             message: "Blog updated successfully!",
-            blog: updatedBlog
+            blog
         });
 
     } catch (error) {
@@ -254,20 +317,21 @@ router.put("/blogs/:id", async (req, res) => {
 
 
 // ============================
-// DELETE BLOG API
+// DELETE MY BLOG
 // ============================
 
-router.delete("/blogs/:id", async (req, res) => {
+router.delete("/blogs/:id", authMiddleware, async (req, res) => {
 
     try {
 
-        const deletedBlog = await Blog.findByIdAndDelete(
-            req.params.id
-        );
+        const deletedBlog = await Blog.findOneAndDelete({
+            _id: req.params.id,
+            userId: req.user.userId
+        });
 
         if (!deletedBlog) {
             return res.status(404).json({
-                message: "Blog not found"
+                message: "Blog not found or you are not the owner"
             });
         }
 
@@ -286,7 +350,6 @@ router.delete("/blogs/:id", async (req, res) => {
     }
 
 });
-
 
 
 module.exports = router;
