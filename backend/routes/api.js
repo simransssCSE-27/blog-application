@@ -206,4 +206,87 @@ router.get("/blogs/:id", async (req, res) => {
     }
 
 });
+
+// ============================
+// UPDATE BLOG API
+// ============================
+
+router.put("/blogs/:id", async (req, res) => {
+
+    try {
+
+        const { title, content, author } = req.body;
+
+        const updatedBlog = await Blog.findByIdAndUpdate(
+            req.params.id,
+            {
+                title,
+                content,
+                author
+            },
+            {
+                new: true
+            }
+        );
+
+        if (!updatedBlog) {
+            return res.status(404).json({
+                message: "Blog not found"
+            });
+        }
+
+        res.json({
+            message: "Blog updated successfully!",
+            blog: updatedBlog
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Unable to update blog"
+        });
+
+    }
+
+});
+
+
+// ============================
+// DELETE BLOG API
+// ============================
+
+router.delete("/blogs/:id", async (req, res) => {
+
+    try {
+
+        const deletedBlog = await Blog.findByIdAndDelete(
+            req.params.id
+        );
+
+        if (!deletedBlog) {
+            return res.status(404).json({
+                message: "Blog not found"
+            });
+        }
+
+        res.json({
+            message: "Blog deleted successfully!"
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        res.status(500).json({
+            message: "Unable to delete blog"
+        });
+
+    }
+
+});
+
+
+
 module.exports = router;
