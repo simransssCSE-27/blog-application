@@ -1,109 +1,248 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My Dashboard - My Blog</title>
+    <title>Dashboard - My Blog</title>
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 30px;
+            padding: 0;
         }
 
-        h1 {
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #222;
+            min-height: 100vh;
+        }
+
+        /* ============================
+           NAVBAR
+        ============================ */
+
+        nav {
+            background: #111;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .logout-button {
+            padding: 9px 18px;
+            background: white;
+            color: #111;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .logout-button:hover {
+            background: #ddd;
+        }
+
+        /* ============================
+           HEADER
+        ============================ */
+
+        .header {
             text-align: center;
+            padding: 45px 20px 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
             margin-bottom: 10px;
         }
 
         #welcome {
-            text-align: center;
             color: #777;
-            margin-bottom: 25px;
+            font-size: 17px;
         }
 
+        /* ============================
+           BLOG CONTAINER
+        ============================ */
+
         #blogs {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
+            padding: 10px 20px 50px;
         }
 
         .blog-card {
             background: white;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+            padding: 28px;
+            margin-bottom: 22px;
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
         }
 
         .blog-card h2 {
-            margin-top: 0;
+            font-size: 24px;
+            margin-bottom: 10px;
         }
 
         .author {
             color: #777;
             margin-bottom: 15px;
+            font-size: 14px;
         }
+
+        .content-preview {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* ============================
+           BUTTONS
+        ============================ */
 
         .button {
             display: inline-block;
-            margin-top: 15px;
+            margin-top: 20px;
             margin-right: 8px;
-            padding: 10px 15px;
-            background: #222;
+            padding: 10px 16px;
+            background: #111;
             color: white;
             text-decoration: none;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 14px;
         }
 
         .button:hover {
-            background: #444;
+            background: #333;
         }
 
         .delete-button {
-            background: #c62828;
+            background: #d32f2f;
         }
 
         .delete-button:hover {
-            background: #a51f1f;
+            background: #b71c1c;
         }
 
-        .logout-button {
-            display: block;
-            margin: 0 auto 25px auto;
-            padding: 10px 20px;
-            background: #222;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        /* ============================
+           EMPTY / LOADING MESSAGE
+        ============================ */
+
+        .message {
+            text-align: center;
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            color: #777;
         }
 
-        .logout-button:hover {
-            background: #444;
+        /* ============================
+           MOBILE RESPONSIVE
+        ============================ */
+
+        @media (max-width: 600px) {
+
+            nav {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                font-size: 19px;
+            }
+
+            .logout-button {
+                padding: 8px 12px;
+            }
+
+            .header {
+                padding: 35px 15px 20px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            #blogs {
+                padding: 10px 15px 40px;
+            }
+
+            .blog-card {
+                padding: 20px;
+            }
+
+            .blog-card h2 {
+                font-size: 21px;
+            }
+
+            .button {
+                width: 100%;
+                text-align: center;
+                margin-right: 0;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>My Blog Dashboard</h1>
+    <!-- ============================
+         NAVBAR
+    ============================ -->
 
-    <p id="welcome"></p>
+    <nav>
 
-    <button
-        class="logout-button"
-        onclick="logout()"
-    >
-        Logout
-    </button>
+        <div class="logo">
+            My Blog
+        </div>
+
+        <button
+            class="logout-button"
+            onclick="logout()"
+        >
+            Logout
+        </button>
+
+    </nav>
+
+
+    <!-- ============================
+         HEADER
+    ============================ -->
+
+    <section class="header">
+
+        <h1>My Dashboard</h1>
+
+        <p id="welcome">
+            Loading user...
+        </p>
+
+    </section>
+
+
+    <!-- ============================
+         BLOGS
+    ============================ -->
 
     <div id="blogs">
-        <p>Loading your blogs...</p>
+
+        <div class="message">
+            Loading your blogs...
+        </div>
+
     </div>
 
 
@@ -113,16 +252,19 @@
         // CHECK LOGIN
         // ============================
 
-        const token = localStorage.getItem("token");
+        const token =
+            localStorage.getItem("token");
 
         const savedUser =
             localStorage.getItem("user");
+
 
         if (!token) {
 
             alert("Please login first.");
 
-            window.location.href = "login.html";
+            window.location.href =
+                "login.html";
 
         }
 
@@ -136,8 +278,11 @@
             const user =
                 JSON.parse(savedUser);
 
-            document.getElementById("welcome").innerText =
-                "Welcome, " + user.name + "!";
+            document.getElementById("welcome")
+                .innerText =
+                "Welcome back, " +
+                user.name +
+                "! 👋";
 
         }
 
@@ -150,33 +295,42 @@
 
             try {
 
-                const response = await fetch(
-                    "http://localhost:5000/api/my-blogs",
-                    {
-                        method: "GET",
+                const response =
+                    await fetch(
+                        "http://localhost:5000/api/my-blogs",
+                        {
+                            method: "GET",
 
-                        headers: {
-                            "Authorization":
-                                "Bearer " + token
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
                         }
-                    }
-                );
+                    );
+
 
                 const data =
                     await response.json();
 
-                // Token invalid/expired
+
+                // ============================
+                // TOKEN EXPIRED
+                // ============================
+
                 if (response.status === 401) {
 
                     localStorage.removeItem("token");
                     localStorage.removeItem("user");
 
-                    alert("Session expired. Please login again.");
+                    alert(
+                        "Session expired. Please login again."
+                    );
 
                     window.location.href =
                         "login.html";
 
                     return;
+
                 }
 
 
@@ -186,18 +340,38 @@
                 blogsContainer.innerHTML = "";
 
 
-                // No blogs
-                if (!data.blogs ||
-                    data.blogs.length === 0) {
+                // ============================
+                // NO BLOGS
+                // ============================
 
-                    blogsContainer.innerHTML =
-                        "<p>You haven't created any blogs yet.</p>";
+                if (
+                    !data.blogs ||
+                    data.blogs.length === 0
+                ) {
+
+                    blogsContainer.innerHTML = `
+
+                        <div class="message">
+
+                            <h2>No blogs yet ✍️</h2>
+
+                            <p>
+                                You haven't created any blogs yet.
+                            </p>
+
+                        </div>
+
+                    `;
 
                     return;
+
                 }
 
 
-                // Display blogs
+                // ============================
+                // DISPLAY BLOGS
+                // ============================
+
                 data.blogs.forEach(blog => {
 
                     const blogCard =
@@ -206,16 +380,25 @@
                     blogCard.className =
                         "blog-card";
 
+
+                    const preview =
+                        blog.content.length > 150
+                            ? blog.content.substring(0, 150) + "..."
+                            : blog.content;
+
+
                     blogCard.innerHTML = `
 
-                        <h2>${blog.title}</h2>
+                        <h2>
+                            ${blog.title}
+                        </h2>
 
                         <p class="author">
                             By ${blog.author}
                         </p>
 
-                        <p>
-                            ${blog.content.substring(0, 150)}...
+                        <p class="content-preview">
+                            ${preview}
                         </p>
 
                         <a
@@ -241,18 +424,33 @@
 
                     `;
 
+
                     blogsContainer.appendChild(
                         blogCard
                     );
 
                 });
 
-            } catch (error) {
+            }
+
+            catch (error) {
 
                 console.error(error);
 
-                document.getElementById("blogs").innerHTML =
-                    "<p>Unable to load your blogs.</p>";
+                document.getElementById("blogs")
+                    .innerHTML = `
+
+                    <div class="message">
+
+                        <h2>Something went wrong 😕</h2>
+
+                        <p>
+                            Unable to load your blogs.
+                        </p>
+
+                    </div>
+
+                `;
 
             }
 
@@ -270,36 +468,46 @@
                     "Are you sure you want to delete this blog?"
                 );
 
+
             if (!confirmDelete) {
                 return;
             }
 
+
             try {
 
-                const response = await fetch(
-                    `http://localhost:5000/api/blogs/${id}`,
-                    {
-                        method: "DELETE",
+                const response =
+                    await fetch(
+                        `http://localhost:5000/api/blogs/${id}`,
+                        {
+                            method: "DELETE",
 
-                        headers: {
-                            "Authorization":
-                                "Bearer " + token
+                            headers: {
+                                "Authorization":
+                                    "Bearer " + token
+                            }
                         }
-                    }
-                );
+                    );
+
 
                 const data =
                     await response.json();
 
+
                 alert(data.message);
+
 
                 loadBlogs();
 
-            } catch (error) {
+            }
+
+            catch (error) {
 
                 console.error(error);
 
-                alert("Unable to delete blog.");
+                alert(
+                    "Unable to delete blog."
+                );
 
             }
 
@@ -316,7 +524,9 @@
 
             localStorage.removeItem("user");
 
-            alert("Logged out successfully!");
+            alert(
+                "Logged out successfully!"
+            );
 
             window.location.href =
                 "login.html";

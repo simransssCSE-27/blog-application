@@ -1,78 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>Edit Blog</title>
 
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            padding: 40px;
+
+        * {
+            box-sizing: border-box;
         }
+
+        body {
+
+            font-family: Arial, sans-serif;
+
+            background: #f4f6f8;
+
+            margin: 0;
+
+            padding: 40px;
+
+        }
+
 
         .container {
+
             max-width: 600px;
+
             margin: auto;
+
             background: white;
+
             padding: 30px;
+
             border-radius: 10px;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+
+            box-shadow:
+                0 3px 15px rgba(0, 0, 0, 0.1);
+
         }
+
 
         h1 {
+
             text-align: center;
+
+            margin-bottom: 25px;
+
         }
 
+
         label {
+
             display: block;
+
             margin-top: 15px;
+
             margin-bottom: 5px;
+
             font-weight: bold;
+
         }
+
 
         input,
         textarea {
+
             width: 100%;
+
             padding: 10px;
-            box-sizing: border-box;
+
             border: 1px solid #ccc;
+
             border-radius: 5px;
+
+            font-size: 15px;
+
         }
+
+
+        input:focus,
+        textarea:focus {
+
+            outline: none;
+
+            border-color: #555;
+
+        }
+
 
         textarea {
+
             height: 180px;
+
             resize: vertical;
+
         }
+
 
         button {
+
             width: 100%;
+
             margin-top: 20px;
+
             padding: 12px;
+
             background: #222;
+
             color: white;
+
             border: none;
+
             border-radius: 5px;
+
             cursor: pointer;
+
+            font-size: 16px;
+
         }
+
 
         button:hover {
+
             background: #444;
+
         }
+
+
+        .back-button {
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            color: #222;
+
+            text-decoration: none;
+
+        }
+
     </style>
+
 </head>
 
+
 <body>
+
 
     <div class="container">
 
         <h1>Edit Blog</h1>
 
+
         <form id="editForm">
 
-            <label>Title</label>
+
+            <label for="title">
+                Title
+            </label>
 
             <input
                 type="text"
@@ -80,7 +177,10 @@
                 required
             >
 
-            <label>Author</label>
+
+            <label for="author">
+                Author
+            </label>
 
             <input
                 type="text"
@@ -88,29 +188,79 @@
                 required
             >
 
-            <label>Content</label>
+
+            <label for="content">
+                Content
+            </label>
 
             <textarea
                 id="content"
                 required
             ></textarea>
 
+
             <button type="submit">
                 Update Blog
             </button>
 
+
         </form>
+
+
+        <a
+            href="dashboard.html"
+            class="back-button"
+        >
+            ← Back to Dashboard
+        </a>
+
 
     </div>
 
 
     <script>
 
-        // Get blog ID from URL
-        const params =
-            new URLSearchParams(window.location.search);
 
-        const blogId = params.get("id");
+        // ============================
+        // CHECK LOGIN
+        // ============================
+
+        const token =
+            localStorage.getItem("token");
+
+
+        if (!token) {
+
+            alert("Please login first.");
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        // ============================
+        // GET BLOG ID
+        // ============================
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const blogId =
+            params.get("id");
+
+
+        if (!blogId) {
+
+            alert("Blog ID not found.");
+
+            window.location.href =
+                "dashboard.html";
+
+        }
 
 
         // ============================
@@ -121,26 +271,97 @@
 
             try {
 
-                const response = await fetch(
-                    `http://localhost:5000/api/blogs/${blogId}`
-                );
+                const response =
+                    await fetch(
+                        `http://localhost:5000/api/blogs/${blogId}`,
+                        {
+                            method: "GET",
 
-                const data = await response.json();
+                            headers: {
 
-                document.getElementById("title").value =
-                    data.blog.title;
+                                "Authorization":
+                                    "Bearer " + token
 
-                document.getElementById("author").value =
-                    data.blog.author;
+                            }
 
-                document.getElementById("content").value =
-                    data.blog.content;
+                        }
+                    );
 
-            } catch (error) {
+
+                const data =
+                    await response.json();
+
+
+                // ============================
+                // TOKEN EXPIRED
+                // ============================
+
+                if (response.status === 401) {
+
+                    localStorage.removeItem(
+                        "token"
+                    );
+
+                    localStorage.removeItem(
+                        "user"
+                    );
+
+                    alert(
+                        "Session expired. Please login again."
+                    );
+
+                    window.location.href =
+                        "login.html";
+
+                    return;
+
+                }
+
+
+                // ============================
+                // ERROR
+                // ============================
+
+                if (!response.ok) {
+
+                    alert(
+                        data.message ||
+                        "Unable to load blog."
+                    );
+
+                    return;
+
+                }
+
+
+                // ============================
+                // PUT DATA IN FORM
+                // ============================
+
+                document.getElementById(
+                    "title"
+                ).value = data.blog.title;
+
+
+                document.getElementById(
+                    "author"
+                ).value = data.blog.author;
+
+
+                document.getElementById(
+                    "content"
+                ).value = data.blog.content;
+
+
+            }
+
+            catch (error) {
 
                 console.error(error);
 
-                alert("Unable to load blog.");
+                alert(
+                    "Unable to connect to server."
+                );
 
             }
 
@@ -153,62 +374,146 @@
 
         document
             .getElementById("editForm")
-            .addEventListener("submit", async function(event) {
+            .addEventListener(
+                "submit",
+                async function(event) {
 
-                event.preventDefault();
-
-                const title =
-                    document.getElementById("title").value;
-
-                const author =
-                    document.getElementById("author").value;
-
-                const content =
-                    document.getElementById("content").value;
+                    event.preventDefault();
 
 
-                try {
+                    const title =
+                        document.getElementById(
+                            "title"
+                        ).value;
 
-                    const response = await fetch(
-                        `http://localhost:5000/api/blogs/${blogId}`,
-                        {
-                            method: "PUT",
 
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
+                    const author =
+                        document.getElementById(
+                            "author"
+                        ).value;
 
-                            body: JSON.stringify({
-                                title: title,
-                                content: content,
-                                author: author
-                            })
+
+                    const content =
+                        document.getElementById(
+                            "content"
+                        ).value;
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                `http://localhost:5000/api/blogs/${blogId}`,
+                                {
+
+                                    method: "PUT",
+
+                                    headers: {
+
+                                        "Content-Type":
+                                            "application/json",
+
+                                        "Authorization":
+                                            "Bearer " + token
+
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+
+                                            title:
+                                                title,
+
+                                            content:
+                                                content,
+
+                                            author:
+                                                author
+
+                                        })
+
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        // ============================
+                        // TOKEN EXPIRED
+                        // ============================
+
+                        if (
+                            response.status === 401
+                        ) {
+
+                            localStorage.removeItem(
+                                "token"
+                            );
+
+                            localStorage.removeItem(
+                                "user"
+                            );
+
+                            alert(
+                                "Session expired. Please login again."
+                            );
+
+                            window.location.href =
+                                "login.html";
+
+                            return;
+
                         }
-                    );
 
-                    const data = await response.json();
 
-                    alert(data.message);
+                        // ============================
+                        // SHOW MESSAGE
+                        // ============================
 
-                    // Go back to dashboard
-                    window.location.href =
-                        "dashboard.html";
+                        alert(
+                            data.message
+                        );
 
-                } catch (error) {
 
-                    console.error(error);
+                        // ============================
+                        // SUCCESS
+                        // ============================
 
-                    alert("Unable to update blog.");
+                        if (response.ok) {
+
+                            window.location.href =
+                                "dashboard.html";
+
+                        }
+
+                    }
+
+                    catch (error) {
+
+                        console.error(error);
+
+                        alert(
+                            "Unable to connect to server."
+                        );
+
+                    }
 
                 }
+            );
 
-            });
 
+        // ============================
+        // START
+        // ============================
 
-        // Load blog when page opens
         loadBlog();
+
 
     </script>
 
+
 </body>
+
 </html>
