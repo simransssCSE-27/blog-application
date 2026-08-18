@@ -1,93 +1,322 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>API Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Blog API Testing</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+
+        input {
+            display: block;
+            width: 300px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 15px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
+
 <body>
 
     <h1>Blog API Testing</h1>
 
-    <button onclick="testRegister()">Test Register</button>
-    <button onclick="testLogin()">Test Login</button>
-    <button onclick="testBlog()">Test Create Blog</button>
+    <h2>Register</h2>
+
+    <input
+        type="text"
+        id="registerName"
+        placeholder="Enter your name"
+    >
+
+    <input
+        type="email"
+        id="registerEmail"
+        placeholder="Enter your email"
+    >
+
+    <input
+        type="password"
+        id="registerPassword"
+        placeholder="Enter your password"
+    >
+
+    <button onclick="testRegister()">
+        Register
+    </button>
+
+
+    <h2>Login</h2>
+
+    <input
+        type="email"
+        id="loginEmail"
+        placeholder="Enter your email"
+    >
+
+    <input
+        type="password"
+        id="loginPassword"
+        placeholder="Enter your password"
+    >
+
+    <button onclick="testLogin()">
+        Login
+    </button>
+
+
+    <h2>Blogs</h2>
+
+    <button onclick="testBlog()">
+        Get All Blogs
+    </button>
+
 
     <pre id="result"></pre>
-<script>
-    async function testRegister() {
-        const response = await fetch(
-            "https://blog-application-1-i7ng.onrender.com/api/register",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name: "Simran",
-                    email: "simran@example.com",
-                    password: "123456"
-                })
-            }
-        );
 
-        const data = await response.json();
-        console.log(data);
-    }
-</script>
 
-            const data = await response.json();
+    <script>
+
+        // ==========================================
+        // BACKEND URL
+        // ==========================================
+
+        const API_URL =
+            "https://blog-application-1-i7ng.onrender.com";
+
+
+        // ==========================================
+        // SHOW RESULT
+        // ==========================================
+
+        function showResult(data) {
 
             document.getElementById("result").textContent =
                 JSON.stringify(data, null, 2);
+
         }
 
-     <script>
-    async function testLogin() {
-        const response = await fetch(
-            "https://blog-application-1-i7ng.onrender.com/api/login",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: "simran@example.com",
-                    password: "123456"
-                })
+
+        // ==========================================
+        // REGISTER
+        // ==========================================
+
+        async function testRegister() {
+
+            const name =
+                document.getElementById("registerName").value.trim();
+
+            const email =
+                document.getElementById("registerEmail").value.trim();
+
+            const password =
+                document.getElementById("registerPassword").value;
+
+
+            if (!name || !email || !password) {
+
+                alert("Please fill all registration fields.");
+
+                return;
             }
-        );
 
-        const data = await response.json();
-        console.log(data);
-    }
-</script>
-            const data = await response.json();
 
-            document.getElementById("result").textContent =
-                JSON.stringify(data, null, 2);
-        }
-<script>
-    async function testBlog() {
-        const response = await fetch(
-            "https://blog-application-1-i7ng.onrender.com/api/blogs",
-            {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json"
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/register`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                name: name,
+                                email: email,
+                                password: password
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                showResult(data);
+
+
+                if (response.ok) {
+
+                    alert(
+                        "Registration successful!"
+                    );
+
+                } else {
+
+                    alert(
+                        data.message ||
+                        "Registration failed."
+                    );
                 }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unable to connect to server."
+                );
             }
-        );
-
-        const data = await response.json();
-
-        console.log(data);
-    }
-</script>
-            const data = await response.json();
-
-            document.getElementById("result").textContent =
-                JSON.stringify(data, null, 2);
         }
+
+
+        // ==========================================
+        // LOGIN
+        // ==========================================
+
+        async function testLogin() {
+
+            const email =
+                document.getElementById("loginEmail").value.trim();
+
+            const password =
+                document.getElementById("loginPassword").value;
+
+
+            if (!email || !password) {
+
+                alert(
+                    "Please enter email and password."
+                );
+
+                return;
+            }
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/login`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                showResult(data);
+
+
+                if (response.ok) {
+
+                    // Save JWT token
+                    localStorage.setItem(
+                        "token",
+                        data.token
+                    );
+
+
+                    // Save user information
+                    localStorage.setItem(
+                        "user",
+                        JSON.stringify(data.user)
+                    );
+
+
+                    alert(
+                        "Login successful!"
+                    );
+
+                } else {
+
+                    alert(
+                        data.message ||
+                        "Login failed."
+                    );
+                }
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unable to connect to server."
+                );
+            }
+        }
+
+
+        // ==========================================
+        // GET ALL BLOGS
+        // ==========================================
+
+        async function testBlog() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/api/blogs`
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                showResult(data);
+
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    "Unable to connect to server."
+                );
+            }
+        }
+
     </script>
 
 </body>
+
 </html>

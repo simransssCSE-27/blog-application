@@ -1,37 +1,478 @@
-require("dotenv").config();
+<!DOCTYPE html>
+<html lang="en">
 
-const mongoose = require("mongoose");
-const express = require("express");
-const cors = require("cors");
-const apiRoutes = require("./routes/api");
+<head>
 
-const app = express();
+    <meta charset="UTF-8">
 
-const PORT = process.env.PORT || 5000;
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-// Allow your deployed frontend to access the backend
-app.use(cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
+    <title>Register - My Blog</title>
 
-app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.send("Blog Application Backend is Running!");
-});
+    <style>
 
-app.use("/api", apiRoutes);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("MongoDB connected successfully!");
-    })
-    .catch((error) => {
-        console.log("MongoDB connection failed:", error.message);
-    });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+        body {
+            background: #f4f6f8;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+
+        .register-container {
+            background: white;
+
+            width: 400px;
+
+            padding: 35px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+
+        h1 {
+            text-align: center;
+
+            margin-bottom: 10px;
+
+            color: #222;
+        }
+
+
+        .subtitle {
+            text-align: center;
+
+            color: #777;
+
+            margin-bottom: 25px;
+        }
+
+
+        label {
+            display: block;
+
+            margin-bottom: 6px;
+
+            font-weight: bold;
+        }
+
+
+        input {
+            width: 100%;
+
+            padding: 12px;
+
+            margin-bottom: 18px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 6px;
+
+            font-size: 15px;
+        }
+
+
+        input:focus {
+            outline: none;
+
+            border-color: #555;
+        }
+
+
+        button {
+            width: 100%;
+
+            padding: 12px;
+
+            background: #222;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 6px;
+
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+
+        button:hover {
+            background: #444;
+        }
+
+
+        button:disabled {
+            background: #888;
+
+            cursor: not-allowed;
+        }
+
+
+        .login-link {
+            text-align: center;
+
+            margin-top: 20px;
+
+            color: #666;
+        }
+
+
+        .login-link a {
+            color: #222;
+
+            font-weight: bold;
+
+            text-decoration: none;
+        }
+
+
+        #message {
+            text-align: center;
+
+            margin-top: 15px;
+
+            font-weight: bold;
+        }
+
+
+        @media (max-width: 500px) {
+
+            .register-container {
+                width: 90%;
+
+                padding: 25px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="register-container">
+
+
+        <h1>
+            Create Account
+        </h1>
+
+
+        <p class="subtitle">
+            Join our blog community
+        </p>
+
+
+        <form id="registerForm">
+
+
+            <label for="name">
+                Name
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                placeholder="Enter your name"
+                required
+            >
+
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter your password"
+                required
+            >
+
+
+            <button
+                type="submit"
+                id="registerButton">
+
+                Register
+
+            </button>
+
+
+        </form>
+
+
+        <div id="message"></div>
+
+
+        <p class="login-link">
+
+            Already have an account?
+
+            <a href="login.html">
+                Login
+            </a>
+
+        </p>
+
+
+    </div>
+
+
+    <script>
+
+
+        // ==========================================
+        // BACKEND URL
+        // ==========================================
+
+        const API_URL =
+            "https://blog-application-1-i7ng.onrender.com";
+
+
+        // ==========================================
+        // REGISTER FORM
+        // ==========================================
+
+        const registerForm =
+            document.getElementById("registerForm");
+
+
+        const registerButton =
+            document.getElementById("registerButton");
+
+
+        const message =
+            document.getElementById("message");
+
+
+        // ==========================================
+        // REGISTER
+        // ==========================================
+
+        registerForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                // VERY IMPORTANT
+                // Prevent page from refreshing
+
+                event.preventDefault();
+
+
+                // Get values
+
+                const name =
+                    document
+                        .getElementById("name")
+                        .value
+                        .trim();
+
+
+                const email =
+                    document
+                        .getElementById("email")
+                        .value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById("password")
+                        .value;
+
+
+                // Basic validation
+
+                if (!name || !email || !password) {
+
+                    message.innerText =
+                        "Please fill all fields.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                // Disable button
+
+                registerButton.disabled =
+                    true;
+
+                registerButton.innerText =
+                    "Registering...";
+
+
+                message.innerText =
+                    "";
+
+
+                try {
+
+
+                    // ==========================================
+                    // SEND DATA TO RENDER BACKEND
+                    // ==========================================
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/api/register`,
+                            {
+
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    name: name,
+
+                                    email: email,
+
+                                    password: password
+
+                                })
+
+                            }
+                        );
+
+
+                    // ==========================================
+                    // GET RESPONSE
+                    // ==========================================
+
+                    const data =
+                        await response.json();
+
+
+                    console.log(
+                        "Server response:",
+                        data
+                    );
+
+
+                    // ==========================================
+                    // SUCCESS
+                    // ==========================================
+
+                    if (response.ok) {
+
+                        message.innerText =
+                            data.message ||
+                            "Registration successful!";
+
+                        message.style.color =
+                            "green";
+
+
+                        alert(
+                            "Registration successful! 🎉"
+                        );
+
+
+                        // Go to login
+
+                        window.location.href =
+                            "login.html";
+
+
+                    } else {
+
+
+                        // ==========================================
+                        // SERVER ERROR
+                        // ==========================================
+
+                        message.innerText =
+                            data.message ||
+                            "Registration failed.";
+
+                        message.style.color =
+                            "red";
+
+
+                        registerButton.disabled =
+                            false;
+
+                        registerButton.innerText =
+                            "Register";
+
+                    }
+
+
+                } catch (error) {
+
+
+                    // ==========================================
+                    // CONNECTION ERROR
+                    // ==========================================
+
+                    console.error(
+                        "Registration error:",
+                        error
+                    );
+
+
+                    message.innerText =
+                        "Unable to connect to server.";
+
+                    message.style.color =
+                        "red";
+
+
+                    registerButton.disabled =
+                        false;
+
+                    registerButton.innerText =
+                        "Register";
+
+                }
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
