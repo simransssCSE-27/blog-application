@@ -263,4 +263,216 @@
             "https://blog-application-1-i7nq.onrender.com";
 
 
-        //
+        // ==========================================
+        // REGISTER FORM
+        // ==========================================
+
+        const registerForm =
+            document.getElementById("registerForm");
+
+
+        const registerButton =
+            document.getElementById("registerButton");
+
+
+        const message =
+            document.getElementById("message");
+
+
+        // ==========================================
+        // REGISTER
+        // ==========================================
+
+        registerForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                // VERY IMPORTANT
+                // Prevent page from refreshing
+
+                event.preventDefault();
+
+
+                // Get values
+
+                const name =
+                    document
+                        .getElementById("name")
+                        .value
+                        .trim();
+
+
+                const email =
+                    document
+                        .getElementById("email")
+                        .value
+                        .trim();
+
+
+                const password =
+                    document
+                        .getElementById("password")
+                        .value;
+
+
+                // Basic validation
+
+                if (!name || !email || !password) {
+
+                    message.innerText =
+                        "Please fill all fields.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                // Disable button
+
+                registerButton.disabled =
+                    true;
+
+                registerButton.innerText =
+                    "Registering...";
+
+
+                message.innerText =
+                    "";
+
+
+                try {
+
+
+                    // ==========================================
+                    // SEND DATA TO RENDER BACKEND
+                    // ==========================================
+
+                    const response =
+                        await fetch(
+                            `${API_URL}/api/register`,
+                            {
+
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    name: name,
+
+                                    email: email,
+
+                                    password: password
+
+                                })
+
+                            }
+                        );
+
+
+                    // ==========================================
+                    // GET RESPONSE
+                    // ==========================================
+
+                    const data =
+                        await response.json();
+
+
+                    console.log(
+                        "Server response:",
+                        data
+                    );
+
+
+                    // ==========================================
+                    // SUCCESS
+                    // ==========================================
+
+                    if (response.ok) {
+
+                        message.innerText =
+                            data.message ||
+                            "Registration successful!";
+
+                        message.style.color =
+                            "green";
+
+
+                        alert(
+                            "Registration successful! 🎉"
+                        );
+
+
+                        // Go to login
+
+                        window.location.href =
+                            "login.html";
+
+
+                    } else {
+
+
+                        // ==========================================
+                        // SERVER ERROR
+                        // ==========================================
+
+                        message.innerText =
+                            data.message ||
+                            "Registration failed.";
+
+                        message.style.color =
+                            "red";
+
+
+                        registerButton.disabled =
+                            false;
+
+                        registerButton.innerText =
+                            "Register";
+
+                    }
+
+
+                } catch (error) {
+
+
+                    // ==========================================
+                    // CONNECTION ERROR
+                    // ==========================================
+
+                    console.error(
+                        "Registration error:",
+                        error
+                    );
+
+
+                    message.innerText =
+                        "Unable to connect to server.";
+
+                    message.style.color =
+                        "red";
+
+
+                    registerButton.disabled =
+                        false;
+
+                    registerButton.innerText =
+                        "Register";
+
+                }
+
+            }
+        );
+
+
+    </script>
+
+
+</body>
+
+</html>
