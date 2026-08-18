@@ -10,26 +10,29 @@ const app = express();
 
 const PORT = process.env.PORT || 5000;
 
+// ============================
+// CORS
+// ============================
+
+app.use(cors({
+    origin: "https://chimerical-beignet-e5df0c.netlify.app",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
 
 // ============================
 // MIDDLEWARE
 // ============================
 
-app.use(cors());
-
 app.use(express.json());
-
 
 // ============================
 // HOME ROUTE
 // ============================
 
 app.get("/", (req, res) => {
-
     res.send("Blog Application Backend is Running!");
-
 });
-
 
 // ============================
 // API ROUTES
@@ -37,39 +40,27 @@ app.get("/", (req, res) => {
 
 app.use("/api", apiRoutes);
 
-
 // ============================
 // MONGODB CONNECTION
 // ============================
 
 mongoose.connect(process.env.MONGO_URI)
-
     .then(() => {
-
-        console.log(
-            "MongoDB connected successfully!"
-        );
-
+        console.log("MongoDB connected successfully!");
     })
-
     .catch((error) => {
-
         console.log(
             "MongoDB connection failed:",
             error.message
         );
-
     });
-
 
 // ============================
 // START SERVER
 // ============================
 
-app.listen(PORT, () => {
-
+app.listen(PORT, "0.0.0.0", () => {
     console.log(
         `Server running on port ${PORT}`
     );
-
 });
