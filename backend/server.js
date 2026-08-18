@@ -1,7 +1,7 @@
 require("dotenv").config();
 
-const mongoose = require("mongoose");
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 
 const apiRoutes = require("./routes/api");
@@ -15,10 +15,12 @@ const PORT = process.env.PORT || 5000;
 // ============================
 
 app.use(cors({
-    origin: "https://chimerical-beignet-e5df0c.netlify.app",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
+
+app.options("*", cors());
 
 // ============================
 // MIDDLEWARE
@@ -60,7 +62,5 @@ mongoose.connect(process.env.MONGO_URI)
 // ============================
 
 app.listen(PORT, "0.0.0.0", () => {
-    console.log(
-        `Server running on port ${PORT}`
-    );
+    console.log(`Server running on port ${PORT}`);
 });
