@@ -1,182 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>Create Blog</title>
-
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f4f6fb;
-            color: #222;
-        }
-
-
-        header {
-            background: #111;
-            color: white;
-            padding: 20px 7%;
-
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-
-        header a {
-            color: white;
-            text-decoration: none;
-        }
-
-
-        .container {
-            width: 90%;
-            max-width: 800px;
-            margin: 50px auto;
-        }
-
-
-        .card {
-            background: white;
-            padding: 35px;
-            border-radius: 15px;
-
-            box-shadow:
-                0 3px 15px rgba(0,0,0,0.08);
-        }
-
-
-        h1 {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-
-        input,
-        textarea {
-
-            width: 100%;
-
-            padding: 14px;
-
-            border: 1px solid #ccc;
-
-            border-radius: 8px;
-
-            font-size: 16px;
-
-            margin-bottom: 20px;
-
-            outline: none;
-        }
-
-
-        input:focus,
-        textarea:focus {
-            border-color: #111;
-        }
-
-
-        textarea {
-
-            min-height: 250px;
-
-            resize: vertical;
-
-        }
-
-
-        button {
-
-            width: 100%;
-
-            padding: 14px;
-
-            background: #111;
-
-            color: white;
-
-            border: none;
-
-            border-radius: 8px;
-
-            font-size: 17px;
-
-            font-weight: bold;
-
-            cursor: pointer;
-
-        }
-
-
-        button:hover {
-            background: #333;
-        }
-
-
-        .back {
-
-            display: block;
-
-            text-align: center;
-
-            margin-top: 20px;
-
-            color: #111;
-
-            text-decoration: none;
-
-        }
-
-
-        #message {
-
-            text-align: center;
-
-            margin-top: 20px;
-
-            font-weight: bold;
-
-        }
-
-    </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Blog</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;800;900&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+  :root{
+    --paper: #e7ddc4;
+    --paper-card: #f3ecd9;
+    --ink: #2a2117;
+    --ink-soft: #6b6151;
+    --stamp: #9c3b2e;
+    --olive: #5c6b47;
+    --error: #9c3b2e;
+    --success: #4f6b3f;
+  }
+
+  *{ box-sizing: border-box; }
+  html, body{ margin: 0; padding: 0; }
+
+  body{
+    min-height: 100vh;
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,255,255,0.35), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 110% 30%, rgba(0,0,0,0.05), transparent 60%);
+    font-family: 'Newsreader', serif;
+    color: var(--ink);
+    position: relative;
+  }
+
+  body::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.16  0 0 0 0 0.13  0 0 0 0 0.09  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  header.bar{
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 7%;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .logo{
+    font-family: 'Bitter', serif;
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  header.bar a{
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+  }
+  header.bar a:hover{ border-color: var(--stamp); color: var(--stamp); }
+
+  .container{
+    position: relative;
+    z-index: 2;
+    width: 90%;
+    max-width: 640px;
+    margin: 50px auto 70px;
+  }
+
+  .card{
+    background: var(--paper-card);
+    border: 1px solid rgba(42,33,23,0.16);
+    border-radius: 3px;
+    padding: 40px 36px;
+    box-shadow: 0 14px 34px -14px rgba(0,0,0,0.22);
+    transform: rotate(-0.3deg);
+  }
+
+  .kicker{
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--stamp);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  h1{
+    font-family: 'Bitter', serif;
+    font-weight: 900;
+    font-size: 28px;
+    text-align: center;
+    margin: 0 0 30px;
+  }
+
+  label{
+    display: block;
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  input, textarea{
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px dashed rgba(42,33,23,0.4);
+    padding: 10px 4px;
+    font-size: 16px;
+    font-family: 'Newsreader', serif;
+    color: var(--ink);
+    outline: none;
+    margin-bottom: 24px;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+
+  textarea{
+    min-height: 220px;
+    resize: vertical;
+    line-height: 1.7;
+    border: 1.5px dashed rgba(42,33,23,0.4);
+    border-radius: 3px;
+    padding: 14px;
+  }
+
+  input:focus, textarea:focus{
+    border-color: var(--stamp);
+    background: rgba(156,59,46,0.04);
+  }
+
+  .stamp-wrap{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  button{
+    position: relative;
+    font-family: 'Bitter', serif;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--paper-card);
+    background: var(--stamp);
+    border: 2.5px solid var(--stamp);
+    border-radius: 50% / 42%;
+    padding: 16px 42px;
+    cursor: pointer;
+    transform: rotate(-1.5deg);
+    transition: transform 0.18s ease, opacity 0.18s ease;
+  }
+
+  button:hover{ transform: rotate(0deg) scale(1.03); }
+  button:disabled{ opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  #message{
+    text-align: center;
+    margin-top: 18px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 12.5px;
+    min-height: 16px;
+  }
+
+  .back{
+    display: block;
+    text-align: center;
+    margin-top: 22px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    text-decoration: none;
+    font-family: 'Courier Prime', monospace;
+    letter-spacing: 0.05em;
+  }
+  .back:hover{ color: var(--stamp); }
+
+  @media (max-width: 500px){
+    .card{ padding: 30px 22px; }
+  }
+
+</style>
 </head>
 
 
 <body>
 
-
-<header>
-
-    <h2>My Blog</h2>
-
-    <a href="dashboard.html">
-        ← Dashboard
-    </a>
-
+<header class="bar">
+    <div class="logo">My Blog</div>
+    <a href="dashboard.html">← Dashboard</a>
 </header>
 
 
@@ -184,59 +214,26 @@
 
     <div class="card">
 
-        <h1>
-            Create New Blog ✍️
-        </h1>
-
+        <div class="kicker">New Dispatch</div>
+        <h1>Write Something ✍️</h1>
 
         <form id="blogForm">
 
+            <label for="title">Blog Title</label>
+            <input type="text" id="title" placeholder="Enter your blog title" required>
 
-            <label for="title">
-                Blog Title
-            </label>
+            <label for="content">Blog Content</label>
+            <textarea id="content" placeholder="Write your thoughts, ideas and stories..." required></textarea>
 
-            <input
-                type="text"
-                id="title"
-                placeholder="Enter your blog title"
-                required
-            >
-
-
-            <label for="content">
-                Blog Content
-            </label>
-
-            <textarea
-                id="content"
-                placeholder="Write your thoughts, ideas and stories..."
-                required
-            ></textarea>
-
-
-            <button
-                type="submit"
-                id="publishBtn">
-
-                Publish Blog 🚀
-
-            </button>
-
+            <div class="stamp-wrap">
+                <button type="submit" id="publishBtn">Publish</button>
+            </div>
 
         </form>
 
-
         <div id="message"></div>
 
-
-        <a
-            href="dashboard.html"
-            class="back">
-
-            ← Back to Dashboard
-
-        </a>
+        <a href="dashboard.html" class="back">← Back to Dashboard</a>
 
     </div>
 
@@ -245,21 +242,18 @@
 
 <script>
 
-
     // ==========================================
     // BACKEND URL
     // ==========================================
 
-    const API_URL =
-        "https://blog-application-1-i7nq.onrender.com";
+    const API_URL = "https://blog-application-1-i7nq.onrender.com";
 
 
     // ==========================================
     // TOKEN
     // ==========================================
 
-    const token =
-        localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
 
     // ==========================================
@@ -267,10 +261,7 @@
     // ==========================================
 
     if (!token) {
-
-        window.location.href =
-            "login.html";
-
+        window.location.href = "login.html";
     }
 
 
@@ -278,152 +269,68 @@
     // FORM
     // ==========================================
 
-    const form =
-        document.getElementById("blogForm");
-
-
-    const message =
-        document.getElementById("message");
-
-
-    const publishBtn =
-        document.getElementById("publishBtn");
+    const form = document.getElementById("blogForm");
+    const message = document.getElementById("message");
+    const publishBtn = document.getElementById("publishBtn");
 
 
     // ==========================================
     // CREATE BLOG
     // ==========================================
 
-    form.addEventListener(
-        "submit",
-        async function(event) {
+    form.addEventListener("submit", async function(event) {
 
-            event.preventDefault();
+        event.preventDefault();
 
+        const title = document.getElementById("title").value.trim();
+        const content = document.getElementById("content").value.trim();
 
-            const title =
-                document.getElementById("title")
-                    .value
-                    .trim();
-
-
-            const content =
-                document.getElementById("content")
-                    .value
-                    .trim();
-
-
-            if (!title || !content) {
-
-                message.innerText =
-                    "Please fill all fields.";
-
-                message.style.color =
-                    "red";
-
-                return;
-
-            }
-
-
-            publishBtn.disabled = true;
-
-            publishBtn.innerText =
-                "Publishing...";
-
-
-            try {
-
-                const response =
-                    await fetch(
-                        `${API_URL}/api/create-blog`,
-                        {
-
-                            method: "POST",
-
-                            headers: {
-
-                                "Content-Type":
-                                    "application/json",
-
-                                "Authorization":
-                                    "Bearer " + token
-
-                            },
-
-                            body: JSON.stringify({
-
-                                title: title,
-
-                                content: content
-
-                            })
-
-                        }
-                    );
-
-
-                const data =
-                    await response.json();
-
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        data.message ||
-                        "Unable to create blog"
-                    );
-
-                }
-
-
-                message.innerText =
-                    "Blog created successfully! 🎉";
-
-
-                message.style.color =
-                    "green";
-
-
-                form.reset();
-
-
-                setTimeout(
-                    function() {
-
-                        window.location.href =
-                            "dashboard.html";
-
-                    },
-                    1000
-                );
-
-
-            } catch (error) {
-
-                console.error(error);
-
-
-                message.innerText =
-                    error.message ||
-                    "Server error";
-
-
-                message.style.color =
-                    "red";
-
-
-                publishBtn.disabled =
-                    false;
-
-
-                publishBtn.innerText =
-                    "Publish Blog 🚀";
-
-            }
-
+        if (!title || !content) {
+            message.innerText = "Please fill all fields.";
+            message.style.color = "var(--error)";
+            return;
         }
-    );
+
+        publishBtn.disabled = true;
+        publishBtn.innerText = "Publishing...";
+
+        try {
+
+            const response = await fetch(`${API_URL}/api/create-blog`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({ title, content })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Unable to create blog");
+            }
+
+            message.innerText = "Blog created successfully!";
+            message.style.color = "var(--success)";
+
+            form.reset();
+
+            setTimeout(function() {
+                window.location.href = "dashboard.html";
+            }, 900);
+
+        } catch (error) {
+
+            console.error(error);
+
+            message.innerText = error.message || "Server error";
+            message.style.color = "var(--error)";
+
+            publishBtn.disabled = false;
+            publishBtn.innerText = "Publish";
+        }
+    });
 
 </script>
 

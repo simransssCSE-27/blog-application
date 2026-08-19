@@ -1,57 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Blog</title>
 
-    <title>My Blog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;800;900&family=Newsreader:ital,wght@0,400;0,500;1,400;1,500&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="css/style.css">
+<style>
+
+  :root{
+    --paper: #e7ddc4;
+    --paper-card: #f3ecd9;
+    --paper-card-2: #ece2c8;
+    --ink: #2a2117;
+    --ink-soft: #6b6151;
+    --stamp: #9c3b2e;
+    --olive: #5c6b47;
+    --gold: #a9822f;
+  }
+
+  *{ box-sizing: border-box; }
+  html, body{ margin: 0; padding: 0; }
+
+  body{
+    min-height: 100vh;
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,255,255,0.35), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 110% 30%, rgba(0,0,0,0.05), transparent 60%);
+    font-family: 'Newsreader', serif;
+    color: var(--ink);
+    position: relative;
+  }
+
+  body::before{
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0.16  0 0 0 0 0.13  0 0 0 0 0.09  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  header.bar{
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 26px 7%;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .logo{
+    font-family: 'Bitter', serif;
+    font-weight: 900;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  nav a{
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    margin-left: 26px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  nav a:hover{ border-color: var(--stamp); color: var(--stamp); }
+
+  main{
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 90px 24px 60px;
+    text-align: center;
+  }
+
+  .kicker{
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--stamp);
+    margin-bottom: 18px;
+  }
+
+  h1.hero-title{
+    font-family: 'Bitter', serif;
+    font-weight: 900;
+    font-size: clamp(34px, 6vw, 56px);
+    line-height: 1.12;
+    margin: 0 0 22px;
+    letter-spacing: -0.01em;
+  }
+
+  h1.hero-title em{
+    font-style: italic;
+    font-family: 'Newsreader', serif;
+    font-weight: 500;
+    color: var(--stamp);
+  }
+
+  .hero-sub{
+    font-size: 18px;
+    color: var(--ink-soft);
+    max-width: 480px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+
+  .hero-actions{
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 70px;
+  }
+
+  .stamp-btn{
+    position: relative;
+    font-family: 'Bitter', serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 50% / 42%;
+    padding: 15px 32px;
+    cursor: pointer;
+    transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+    display: inline-block;
+  }
+
+  .stamp-btn.primary{
+    color: var(--paper-card);
+    background: var(--stamp);
+    border: 2.5px solid var(--stamp);
+    transform: rotate(-1.5deg);
+  }
+  .stamp-btn.primary:hover{ transform: rotate(0deg) scale(1.04); }
+
+  .stamp-btn.ghost{
+    color: var(--olive);
+    background: transparent;
+    border: 2.5px solid var(--olive);
+    transform: rotate(1.5deg);
+  }
+  .stamp-btn.ghost:hover{ transform: rotate(0deg) scale(1.04); background: rgba(92,107,71,0.08); }
+
+  .toc{
+    background: var(--paper-card);
+    border: 1px solid rgba(42,33,23,0.16);
+    border-radius: 3px;
+    padding: 34px 38px;
+    text-align: left;
+    box-shadow: 0 14px 34px -14px rgba(0,0,0,0.2);
+    transform: rotate(-0.4deg);
+  }
+
+  .toc-heading{
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    border-bottom: 1px dashed rgba(42,33,23,0.3);
+    padding-bottom: 10px;
+  }
+
+  .toc-item{
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--ink);
+    font-family: 'Newsreader', serif;
+    font-size: 17px;
+    padding: 10px 0;
+  }
+
+  .toc-item .num{
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: var(--stamp);
+    flex-shrink: 0;
+  }
+
+  .toc-item .leader{
+    flex: 1;
+    border-bottom: 1px dotted rgba(42,33,23,0.35);
+    margin: 0 8px;
+    transform: translateY(-4px);
+  }
+
+  .toc-item .go{
+    font-family: 'Courier Prime', monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+    transition: color 0.2s ease;
+  }
+
+  .toc-item:hover .go{ color: var(--stamp); }
+  .toc-item:hover{ color: var(--stamp); }
+
+  footer{
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 30px 24px 50px;
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 560px){
+    header.bar{ padding: 20px 6%; flex-direction: column; gap: 14px; }
+    nav a{ margin: 0 10px; }
+    .toc{ padding: 26px 22px; }
+  }
+
+</style>
 </head>
 
 <body>
 
-    <header>
+  <header class="bar">
+    <div class="logo">My Blog</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="register.html">Register</a>
+    </nav>
+  </header>
 
-        <h1>My Blog</h1>
+  <main>
 
-        <nav>
+    <div class="kicker">Est. for writers &amp; wanderers</div>
 
-            <a href="index.html">
-                Home
-            </a>
+    <h1 class="hero-title">A quiet page for <em>loud</em> ideas.</h1>
 
-            <a href="login.html">
-                Login
-            </a>
+    <p class="hero-sub">
+      Write dispatches, keep a running notebook, or publish the essay
+      you've been putting off. My Blog is a plain, unhurried place to
+      put your thoughts on paper.
+    </p>
 
-            <a href="register.html">
-                Register
-            </a>
+    <div class="hero-actions">
+      <a href="register.html" class="stamp-btn primary">Start Writing</a>
+      <a href="login.html" class="stamp-btn ghost">I have an account</a>
+    </div>
 
-        </nav>
+    <div class="toc">
+      <div class="toc-heading">In this issue</div>
 
-    </header>
+      <a href="index.html" class="toc-item">
+        <span class="num">01</span>
+        <span>Home</span>
+        <span class="leader"></span>
+        <span class="go">you are here</span>
+      </a>
 
+      <a href="register.html" class="toc-item">
+        <span class="num">02</span>
+        <span>Create your byline</span>
+        <span class="leader"></span>
+        <span class="go">register →</span>
+      </a>
 
-    <main>
+      <a href="login.html" class="toc-item">
+        <span class="num">03</span>
+        <span>Return to your desk</span>
+        <span class="leader"></span>
+        <span class="go">login →</span>
+      </a>
 
-        <h2>
-            Welcome to My Blog
-        </h2>
+    </div>
 
-        <p>
-            Share your thoughts, ideas and stories.
-        </p>
+  </main>
 
-        <a href="login.html">
-            Explore Blogs
-        </a>
-
-    </main>
-
-
-    <script src="js/script.js"></script>
+  <footer>
+    My Blog · A small publication, kept by its writers
+  </footer>
 
 </body>
 </html>
